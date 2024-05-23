@@ -116,7 +116,44 @@ Add-Content `
 Optimize          = $Optimize
 "
 
+function Execute
+{
+    [CmdletBinding()]
+    param(
+        $File
+    )
 
+    # Note we're calling powershell.exe directly, instead
+    # of running Invoke-Expression, as suggested by
+    # https://learn.microsoft.com/en-us/powershell/scripting/learn/deep-dives/avoid-using-invoke-expression?view=powershell-7.3
+    # Note that this will run powershell.exe
+    # even if the system has pwsh.exe.
+    powershell.exe -File $File
+
+    # capture the exit code from the process
+    $processExitCode = $LASTEXITCODE
+
+    # This check allows us to capture cases where the command we execute exits with an error code.
+    # In that case, we do want to throw an exception with whatever is in stderr. Normally, when
+    # Invoke-Expression throws, the error will come the normal way (i.e. $Error) and pass via the
+    # catch below.
+    if ($processExitCode -or $expError)
+    {
+        if ($processExitCode -eq 3010)
+        {
+            # Expected condition. The recent changes indicate a reboot is necessary. Please reboot at your earliest convenience.
+        }
+        elseif ($expError)
+        {
+            throw $expError
+        }
+        else
+        {
+            throw "Installation failed with exit code: $processExitCode. Please see the Chocolatey logs in %ALLUSERSPROFILE%\chocolatey\logs folder for details."
+            break
+        }
+    }
+}
 
 ##############################
 #    Prep for AVD Install    #
