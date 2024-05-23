@@ -171,19 +171,6 @@ Else {
 
 
 
-############################
-#      Install Apps        #
-############################
-
-# Loop through $ChocoPackages and install each package
-foreach ($package in $ChocoPackages) {
-    Add-Content -LiteralPath C:\log\New-AVDSessionHost.log "Installing $package"
-    write-host `
-        -ForegroundColor Cyan `
-        -BackgroundColor Black `
-        "Installing $package"
-    choco install $package -y
-}
 
 
 #########################
@@ -208,6 +195,26 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 ##########################
 ##  Install Choco Pkgs  ##
 ##########################
+$ChocoExePath = "$Env:ProgramData/chocolatey/choco.exe" 
+$ChocoExpression = "$ChocoExePath install -y -f --acceptlicense --no-progress --stoponfirstfailure --ignore-checksums"
+
+# Loop through $ChocoPackages and install each package
+foreach ($package in $ChocoPackages) {
+    Add-Content -LiteralPath C:\log\New-AVDSessionHost.log "Installing $package"
+    write-host `
+        -ForegroundColor Cyan `
+        -BackgroundColor Black `
+        "Installing $package"
+        Set-ExecutionPolicy Bypass -Scope Process -Force
+        $packageScriptPath = [System.IO.Path]::GetTempFileName() + ".ps1"
+        $expression = "$ChocoExpression $package"
+        Set-Content -Value $expression -Path $packageScriptPath
+        Write-Host "File path $packageScriptPath"
+
+        Execute -File $packageScriptPath
+        Remove-Item $packageScriptPath
+
+}
 
 
 ##########################
