@@ -45,7 +45,6 @@ $ChocoPackages = @(
     'kubernetes-cli',
     'kui',
     'microsoftazurestorageexplorer',
-    'microsoft-windows-terminal',
     'mongoclient',
     'notepadplusplus',
     'nvm',
@@ -206,15 +205,10 @@ foreach ($package in $ChocoPackages) {
 ##    Install Winget    ##
 ##########################
 
-$wingetURL = 'https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.appxbundle'
-$wingetInstaller = "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.appxbundle"
-$LocalOptimizePath = "C:\temp\AVD\"
-Invoke-WebRequest `
-    -Uri $wingetURL `
-    -OutFile "$wingetInstaller"
-    Add-AppxPackage $LocalOptimizePath$wingetInstaller
+Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe
 
 
+winget install --id Microsoft.WindowsTerminal -e
 ##########################
 #    Mark Complete       #
 ##########################
