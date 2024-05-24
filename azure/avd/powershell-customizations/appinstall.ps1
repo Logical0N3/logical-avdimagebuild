@@ -44,6 +44,7 @@ $ChocoPackages = @(
     'k6',
     'kubernetes-cli',
     'kui',
+    'microsoft-windows-terminal -pre',
     'microsoftazurestorageexplorer',
     'mongoclient',
     'notepadplusplus',
@@ -201,14 +202,6 @@ foreach ($package in $ChocoPackages) {
 }
 
 
-##########################
-##    Install Winget    ##
-##########################
-
-Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe
-
-
-winget install --id Microsoft.WindowsTerminal -e
 ##########################
 #    Mark Complete       #
 ##########################
